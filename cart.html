@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>product card</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>This is cart page</h1>
+    <div id="mainSection"></div>
+</body>
+</html>
+<script>
+     function Fetchdata(){
+      fetch("https://add-to-cart-backend-3.onrender.com/cart")
+         .then((res)=> res.json())
+         .then((data)=>{
+          CardList(data)
+          productData=data
+         })
+         .catch((err)=>console.log(err))
+     }
+     Fetchdata()
+    function CardList(data) {
+        const store = data.map((el) => SingleCarad(el.id, el.image, el.title, el.price, el.founder, el.category))
+        //    console.log(store)
+        document.getElementById("mainSection").innerHTML = store.join("")
+    }
+    
+    function SingleCarad(id, image, title, price, founder, category) {
+    
+        let Card = `
+         <a href="d.html?title=${encodeURIComponent(title)}&image=${encodeURIComponent(image)}&founder=${encodeURIComponent(founder)}&category=${encodeURIComponent(category)}&price=${encodeURIComponent(price)}">
+            <div class="card"  data-id=${id}>
+          <div class="card-img">
+            <img src=${image} alt="pitch">
+          </div>
+          <div class="card-body">
+            <h4 class="card-title">${title}</h4>
+            <p class="card-founder">  ${founder}</p>
+            <p class="card-category">${category}</p>
+            <p class="card-price">${price}</p>
+            <a href="#" class="card-link" data-id="${id}">Edit</a>
+            <button class="card-button" data-id="${id}">Delete</button>
+            </div>
+          </div>
+          </a>
+        `
+        return Card;
+    }
+    
+
+    document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("card-button")) {
+    deleteproduct(e.target.dataset.id);
+  }
+})
+function deleteproduct(id) {
+  fetch(`https://add-to-cart-backend-3.onrender.com/cart/${id}`, {
+    method: "DELETE",
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      alert("Deleted..")
+      console.log(data)
+    })
+    .catch((err) => console.log(err))
+}
+</script>
